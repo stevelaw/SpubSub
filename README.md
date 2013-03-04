@@ -1,4 +1,6 @@
-StoreForwardMessageCenter_JS
-============================
+# SpubSub
 
-A pub/sub implementation that stores messages prior to forwarding the message to the subscribers.  A purge policy can be provided for cleaning up messages.
+## What is it?
+
+A pub/sub implementation that stores messages prior to publishing message to 
+the subscribers.
