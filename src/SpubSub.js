@@ -15,140 +15,146 @@
 		// Browser globals (root is window)
 		root.SpubSub = factory;
 	}
-}(this, function() {
+}(this,
+		function() {
 
-	/*
-	 * Hash of subscribers by key/string.
-	 */
-	var keySubs = {};
+			/*
+			 * Hash of subscribers by key/string.
+			 */
+			var keySubs = {};
 
-	/*
-	 * Array of RegEx subscriptions. We need to scan each subscription to
-	 * determine a match. Limit the size of these subscriptions, by
-	 * unsubscribing when not needed, or use string values when the possible
-	 * number of matches is low, is ideal.
-	 */
-	var regExSubs = [];
+			/*
+			 * Array of RegEx subscriptions. We need to scan each subscription
+			 * to determine a match. Limit the size of these subscriptions, by
+			 * unsubscribing when not needed, or use string values when the
+			 * possible number of matches is low, is ideal.
+			 */
+			var regExSubs = [];
 
-	/*
-	 * Message storage.
-	 */
-	var messages = {};
+			/*
+			 * Message storage.
+			 */
+			var messages = {};
 
-	/*
-	 * Error helper.
-	 */
-	var throwError = function(message) {
-		throw new Error(message);
-	};
+			/*
+			 * Error helper.
+			 */
+			var throwError = function(message) {
+				throw new Error(message);
+			};
 
-	/*
-	 * Executes in setTimeout to allow the caller to not be blocked by callee.
-	 */
-	var executeCallback = function(fn, key, message) {
-		setTimeout(function() {
-			fn(key, message);
-		}, 0);
-	};
+			/*
+			 * Executes in setTimeout to allow the caller to not be blocked by
+			 * callee.
+			 */
+			var executeCallback = function(fn, key, message) {
+				setTimeout(function() {
+					fn(key, message);
+				}, 0);
+			};
 
-	/*
-	 * Test each RegExp subscription for a match against the key.
-	 */
-	var testRegExSubs = function(key, message) {
-		for ( var i = 0, len = regExSubs.length; i < len; i++) {
-			var entry = regExSubs[i];
-			if(entry.regex.test(key)) {
-				executeCallback(entry.fn, key, message);
-			}
-		}
-	};
+			/*
+			 * Test each RegExp subscription for a match against the key.
+			 */
+			var testRegExSubs = function(key, message) {
+				for ( var i = 0, len = regExSubs.length; i < len; i++) {
+					var entry = regExSubs[i];
+					if (entry.regex.test(key)) {
+						executeCallback(entry.fn, key, message);
+					}
+				}
+			};
 
-	/**
-	 * 
-	 * @param options.key
-	 *            The subscription key. This can be an array of values. The key
-	 *            can also be a RegEx object. A string will be taken literally,
-	 *            and not interpreted as a regular expression. (Required)
-	 * 
-	 * @param options.fn
-	 *            Called when matched message is stored. (Required)
-	 * 
-	 * @throws Error
-	 *             If any of the required arguments are not supplied, or of the
-	 *             incorrect type.
-	 */
-	var subscribe = function(options) {
-		// Validate method arguments.
-		!options.hasOwnProperty("key") && throwError("options.key is required");
-		!options.fn && throwError("options.fn is required");
-		(typeof (options.fn) !== "function")
-				&& throwError("options.fn is not a function");
+			/**
+			 * 
+			 * @param options.key
+			 *            The subscription key. This can be an array of values.
+			 *            The key can also be a RegEx object. A string will be
+			 *            taken literally, and not interpreted as a regular
+			 *            expression. (Required)
+			 * 
+			 * @param options.fn
+			 *            Called when matched message is stored. (Required)
+			 * 
+			 * @throws Error
+			 *             If any of the required arguments are not supplied, or
+			 *             of the incorrect type.
+			 */
+			var subscribe = function(options) {
+				// Validate method arguments.
+				!options.hasOwnProperty("key")
+						&& throwError("options.key is required");
+				!options.fn && throwError("options.fn is required");
+				(typeof (options.fn) !== "function")
+						&& throwError("options.fn is not a function");
 
-		var keyArray = options.key;
+				var keyArray = options.key;
 
-		// Convert key into an array if not already.
-		if (!(keyArray instanceof Array)) {
-			keyArray = [ keyArray ];
-		}
-		
-		var fn = options.fn;
+				// Convert key into an array if not already.
+				if (!(keyArray instanceof Array)) {
+					keyArray = [ keyArray ];
+				}
 
-		for ( var i = 0, len = keyArray.length; i < len; i++) {
-			var key = keyArray[i];
+				var fn = options.fn;
 
-			if (key instanceof RegExp) {
-				regExSubs.push({
-					regex: key,
-					fn : fn
-				});
-			} else {
-				// We do need to account for the possibility of values being set
-				// to undefined or null, as we control the creation of the
-				// values.
-				keySubs[key] = keySubs[key] || [];
+				for ( var i = 0, len = keyArray.length; i < len; i++) {
+					var key = keyArray[i];
 
-				// Push an object for flexibility.
-				keySubs[key].push({
-					fn : fn
-				});
-			}
-		}
-	};
+					if (key instanceof RegExp) {
+						regExSubs.push({
+							regex : key,
+							fn : fn
+						});
+					} else {
+						/*
+						 * We do need to account for the possibility of values
+						 * being set to undefined or null, as we control the
+						 * creation of the values.
+						 */
+						keySubs[key] = keySubs[key] || [];
 
-	/**
-	 * 
-	 */
-	var store = function(key, val) {
-		if (keySubs.hasOwnProperty(key)) {
-			
-			var subs = keySubs[key];
-			
-			for(var i=0, len = subs.length; i < len; i++) {
-				executeCallback(subs[i].fn, key, val);
-			}
-		}
+						// Push an object for flexibility.
+						keySubs[key].push({
+							fn : fn
+						});
+					}
+				}
+			};
 
-		testRegExSubs(key, val);
-	};
+			/**
+			 * 
+			 */
+			var store = function(key, val) {
+				if (keySubs.hasOwnProperty(key)) {
 
-	/**
-	 * 
-	 */
-	var fetch = function(key) {
-		return messages[key];
-	};
+					var subs = keySubs[key];
 
-	/**
-	 * 
-	 */
-	var remove = function(key) {
-		return delete messages[key];
-	};
+					for ( var i = 0, len = subs.length; i < len; i++) {
+						executeCallback(subs[i].fn, key, val);
+					}
+				}
 
-	return {
-		subscribe : subscribe,
-		store : store,
-		fetch : fetch,
-		remove : remove
-	};
-}));
+				testRegExSubs(key, val);
+			};
+
+			/**
+			 * 
+			 */
+			var fetch = function(key) {
+				return messages[key];
+			};
+
+			/**
+			 * 
+			 */
+			var remove = function(key) {
+				return delete messages[key];
+			};
+
+			return {
+				subscribe : subscribe,
+				store : store,
+				fetch : fetch,
+				remove : remove
+			};
+		}));
