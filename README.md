@@ -22,7 +22,6 @@ spubSub.subscribe({
 		});
 		
 spubSub.store("test", {});		
-
 ```
 
 ### Subscribe Using Key Array
