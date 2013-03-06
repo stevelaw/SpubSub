@@ -1,12 +1,12 @@
 ## What is it?
 
 A pubsub implementation that stores messages prior to publishing to 
-subscribers.  I like to refer to it as a "Store and Forward PubSub".
+subscribers.  
 
 ## What Does SpubSub Stand For?
 
-The pubsub stores messages for future retrieval prior to publishing the 
-message.  The "S" stands for "Store".
+The "S" stands for "Store".  I like to refer to it as a "Store and Forward 
+PubSub".
 
 ## Usage
 
