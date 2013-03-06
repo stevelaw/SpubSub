@@ -123,6 +123,20 @@
 
 			/**
 			 * 
+			 * @param key	Key to unsubscribe.
+			 * @param listener	Listener to unsubscribe.
+			 */
+			var unsubscribe = function(key, listener) {
+				if(key === "all") {
+					keySubs = {};
+					regExSubs = [];
+				} else {
+					
+				}				
+			};
+			
+			/**
+			 * 
 			 */
 			var store = function(key, val) {
 				messages[key] = val;
@@ -157,6 +171,7 @@
 				subscribe : subscribe,
 				store : store,
 				fetch : fetch,
-				remove : remove
+				remove : remove,
+				unsubscribe : unsubscribe
 			};
 		}));
