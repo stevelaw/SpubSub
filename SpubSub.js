@@ -1,4 +1,7 @@
 ;
+/**
+ * 
+ */
 (function(root, factory) {
 	if (typeof exports === 'object') {
 		// Node. Does not work with strict CommonJS, but
@@ -51,8 +54,13 @@
 	/*
 	 * Test each RegExp subscription for a match against the key.
 	 */
-	var scanRegExSubs = function(key) {
-
+	var testRegExSubs = function(key, message) {
+		for ( var i = 0, len = regExSubs.length; i < len; i++) {
+			var entry = regExSubs[i];
+			if(entry.regex.test(key)) {
+				executeCallback(entry.fn, key, message);
+			}
+		}
 	};
 
 	/**
@@ -91,6 +99,7 @@
 
 			if (key instanceof RegExp) {
 				regExSubs.push({
+					regex: key,
 					fn : fn
 				});
 			} else {
@@ -108,7 +117,11 @@
 	};
 
 	var store = function(key, val) {
+		if (keySubs.hasOwnProperty(key)) {
+			executeCallback(keySubs[key].fn, key, val);
+		}
 
+		testRegExSubs(key, val);
 	};
 
 	var fetch = function(key) {
