@@ -1,5 +1,3 @@
-# SpubSub
-
 ## What is it?
 
 A pubsub implementation that stores messages prior to publishing message to 
