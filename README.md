@@ -45,8 +45,7 @@ spubSub.store("test3", {});
 var spubSub = SpubSub();
 		
 spubSub.store("test", {});
-spubSub.remove("test");		
-
+spubSub.remove("test");
 ```
 
 ### Retrieve a Stored Key
@@ -54,6 +53,5 @@ spubSub.remove("test");
 var spubSub = SpubSub();
 		
 spubSub.store("test", {});
-spubSub.fetch("test");		
-
+spubSub.fetch("test");
 ```
