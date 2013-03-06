@@ -125,6 +125,8 @@
 			 * 
 			 */
 			var store = function(key, val) {
+				messages[key] = val;
+				
 				if (keySubs.hasOwnProperty(key)) {
 
 					var subs = keySubs[key];
