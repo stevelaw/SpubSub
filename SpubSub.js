@@ -20,19 +20,55 @@
 	var subs = {};
 	
 	/*
-	 * 
+	 * Message storage.
 	 */
 	var messages = {};
 
-	var subscribe = function(key, fn) {
+	/*
+	 * Error helper.
+	 */
+	var throwError = function(message) {
+		throw new Error(message);
+	};
+	
+	/**
+	 * 
+	 * @param options.key The subscription key. This can be an array of values. 
+	 * 					(Required)
+	 * @param options.fn Called when matched message is stored. (Required)
+	 * 
+	 * @throws Error if any of the required arguments are not supplied, or of 
+	 * 		   the incorrect type. 
+	 */
+	var subscribe = function(options) {
+		/*
+		 * Validate method arguments.
+		 */
+		!options.hasOwnProperty(key) && throwError("options.key is required");
+		!options.fn && throwError("options.fn is required");
+		(typeof(options.fn) !== "function") && throwError("options.fn is not a function");
+
+		var key = options.key;
+		
+		/*
+		 * Convert key into an array if not already. 
+		 */
+		if (!(key instanceof Array)) {
+			key = [key];
+		}
+		
+		var fn = options.fn;
+		
 		// We do need to account for the possibility of values being set to 
 		// undefined or null, as we control the creation of the values.
 		subs[key] = subs[key] || [];
 		
-		// Push an object to support additional features.
+		// Push an object for flexibility.
 		subs[key].push({ fn: fn });
 		
-		
+		if(messages.hasOwnProperty(key)) {
+			fn(messages[key]);
+		}		
 	};
 	
 	var store = function(key, val) {
