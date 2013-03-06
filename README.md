@@ -1,7 +1,7 @@
 ## What is it?
 
-A pubsub implementation that stores messages prior to publishing message to 
-the subscribers.  I like to refer to it as a "Store and Forward PubSub".
+A pubsub implementation that stores messages prior to publishing to 
+subscribers.  I like to refer to it as a "Store and Forward PubSub".
 
 ## What Does SpubSub Stand For?
 
