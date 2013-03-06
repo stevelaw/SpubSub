@@ -8,6 +8,10 @@ subscribers.
 The "S" stands for "Store".  I like to refer to it as a "Store and Forward 
 PubSub".
 
+## Dependencies
+
+None
+
 ## Usage
 
 ### Simple Subscribe and Store
