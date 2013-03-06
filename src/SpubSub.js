@@ -1,6 +1,9 @@
 ;
 /**
+ * A pubsub implementation that stores messages prior to publishing to
+ * subscribers.
  * 
+ * @author Steve Lawson
  */
 (function(root, factory) {
 	if (typeof exports === 'object') {
@@ -66,6 +69,8 @@
 			};
 
 			/**
+			 * Subscribe a function by key or RegExp object, to be called when a
+			 * message is stored matching the registered key or RegExp.
 			 * 
 			 * @param options.key
 			 *            The subscription key. This can be an array of values.
@@ -122,25 +127,62 @@
 			};
 
 			/**
+			 * Unsubscribe an individual or all listeners.
 			 * 
-			 * @param key	Key to unsubscribe.
-			 * @param listener	Listener to unsubscribe.
+			 * @param key
+			 *            Key to unsubscribe. If set to "all", then all
+			 *            subscribers are removed.
+			 * @param listener
+			 *            Listener to unsubscribe.
 			 */
-			var unsubscribe = function(key, listener) {
-				if(key === "all") {
+			var unsubscribe = function(key, fn) {
+				if (key === "all") {
 					keySubs = {};
 					regExSubs = [];
+
+					return true;
 				} else {
-					
-				}				
+					if (key instanceof RegExp) {
+						for ( var i = 0, len = regExSubs.length; i < len; i++) {
+							var regExSub = regExSubs[i];
+							var regEx = regExSub.regex;
+							var regExFn = regExSub.fn;
+
+							if (regEx === key && fn === regExFn) {
+								regExSubs.splice(i, 1);
+
+								return true;
+							}
+						}
+					} else {
+						var subs = keySubs[key];
+
+						if (subs !== undefined && subs.length) {
+							for ( var i = 0, len = subs.length; i < len; i++) {
+								if (fn === subs[i].fn) {
+									subs.splice(i, 1);
+
+									return true;
+								}
+							}
+						}
+					}
+
+					return false;
+				}
 			};
-			
+
 			/**
+			 * Store a message by key in the SpubSub, and notify any listeners.
 			 * 
+			 * @param key
+			 *            The key the message should be stored as.
+			 * @param val
+			 *            The message.
 			 */
 			var store = function(key, val) {
 				messages[key] = val;
-				
+
 				if (keySubs.hasOwnProperty(key)) {
 
 					var subs = keySubs[key];
@@ -154,14 +196,23 @@
 			};
 
 			/**
+			 * Returns a message by passed in key name.
 			 * 
+			 * @param key
+			 *            Key name with which to retrieve the message from the
+			 *            internal message store. Undefined is returned if the
+			 *            message by the key does not exist.
 			 */
 			var fetch = function(key) {
 				return messages[key];
 			};
 
 			/**
+			 * Deletes a message by passed in key name.
 			 * 
+			 * @param key
+			 *            Key name with which to delete the message from the
+			 *            internal message store.
 			 */
 			var remove = function(key) {
 				return delete messages[key];
