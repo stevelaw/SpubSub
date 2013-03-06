@@ -7,13 +7,13 @@
 		// Node. Does not work with strict CommonJS, but
 		// only CommonJS-like environments that support module.exports,
 		// like Node.
-		module.exports = factory();
+		module.exports = factory;
 	} else if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
 		define(factory);
 	} else {
 		// Browser globals (root is window)
-		root.SpubSub = factory();
+		root.SpubSub = factory;
 	}
 }(this, function() {
 
@@ -78,24 +78,23 @@
 	 *             incorrect type.
 	 */
 	var subscribe = function(options) {
-
 		// Validate method arguments.
-		!options.hasOwnProperty(key) && throwError("options.key is required");
+		!options.hasOwnProperty("key") && throwError("options.key is required");
 		!options.fn && throwError("options.fn is required");
 		(typeof (options.fn) !== "function")
 				&& throwError("options.fn is not a function");
 
-		var keys = options.key;
+		var keyArray = options.key;
 
 		// Convert key into an array if not already.
-		if (!(keys instanceof Array)) {
-			keys = [ key ];
+		if (!(keyArray instanceof Array)) {
+			keyArray = [ keyArray ];
 		}
-
+		
 		var fn = options.fn;
 
-		for ( var i = 0, len = keys.length; i < len; i++) {
-			var key = keys[i];
+		for ( var i = 0, len = keyArray.length; i < len; i++) {
+			var key = keyArray[i];
 
 			if (key instanceof RegExp) {
 				regExSubs.push({
@@ -116,18 +115,32 @@
 		}
 	};
 
+	/**
+	 * 
+	 */
 	var store = function(key, val) {
 		if (keySubs.hasOwnProperty(key)) {
-			executeCallback(keySubs[key].fn, key, val);
+			
+			var subs = keySubs[key];
+			
+			for(var i=0, len = subs.length; i < len; i++) {
+				executeCallback(subs[i].fn, key, val);
+			}
 		}
 
 		testRegExSubs(key, val);
 	};
 
+	/**
+	 * 
+	 */
 	var fetch = function(key) {
 		return messages[key];
 	};
 
+	/**
+	 * 
+	 */
 	var remove = function(key) {
 		return delete messages[key];
 	};
