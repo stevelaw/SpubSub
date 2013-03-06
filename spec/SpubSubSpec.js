@@ -169,5 +169,39 @@ describe("SpubSub", function() {
 		
 		expect(returnedValue).toBeUndefined();		
 	});
+	
+	it("can unsubscribe", function() {
+		var keyUnderTest = "key";
+		var fired = false;
+		var fn = function() {
+			fired = true;
+		};
+		
+		spubSub.subscribe({
+			key : keyUnderTest,
+			fn : fn
+		});
+
+		spubSub.store(keyUnderTest, true);
+
+		waitsFor(function() {
+			return fired;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(fired).toEqual(true);
+		});
+		
+		runs(function() {
+			fired = false;
+			spubSub.unsubscribe(keyUnderTest, fn);
+			spubSub.store(keyUnderTest, true);
+		});
+		
+		runs(function() {
+			expect(fired).toEqual(false);
+		});
+
+	});
 
 });
