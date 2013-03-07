@@ -21,7 +21,13 @@
 }
 		(
 				this,
-				function() {
+				function(options) {
+
+					/*
+					 * Separator character.
+					 */
+					var topicSeparator = options && options.topicSeparator
+							|| "/";
 
 					/*
 					 * Hash of subscribers by key/string.
@@ -199,21 +205,64 @@
 					};
 
 					/*
-					 * See JSDoc below.
+					 * Helper function to compare arrays using simple equality
+					 * test.
 					 */
-					var store = function(key, val) {
-						messages[key] = val;
+					var compareArrays = function(array1, array2) {
+						if (array1.length != array2.length) {
+							return false;
+						}
 
-						if (keySubs.hasOwnProperty(key)) {
-
-							var subs = keySubs[key];
-
-							for ( var i = 0, len = subs.length; i < len; i++) {
-								executeCallback(subs[i], key, val);
+						for ( var i = 0; i < array1.length; i++) {
+							if (array1[i] !== array2[i]) {
+								return false;
 							}
 						}
 
-						testRegExSubs(key, val);
+						return true;
+					};
+
+					/*
+					 * See JSDoc below.
+					 */
+					var store = function(key, val, noStore) {
+						if (!noStore) {
+							messages[key] = val;
+						}
+
+						var executeHelper = function(subs) {
+							for ( var i = 0, len = subs.length; i < len; i++) {
+								executeCallback(subs[i], key, val);
+							}
+						};
+
+						// Check for wild card at the end of the key.
+						if (/\*$/.test(key)) {
+							var matchParts = key.split(topicSeparator);
+
+							// Remove wild card
+							matchParts = matchParts.slice(0,
+									matchParts.length - 1);
+
+							console.log(matchParts);
+
+							// Loop through all subscriber keys.
+							for ( var curKey in keySubs) {
+								// Does key contain a topic separator?
+								if (curKey.indexOf(topicSeparator) !== -1) {
+									var keyParts = curKey.split(topicSeparator)
+											.slice(0, matchParts.length);
+
+									console.log(keyParts);
+
+									compareArrays(matchParts, keyParts)
+											&& executeHelper(keySubs[curKey]);
+								}
+							}
+						} else {
+							executeHelper(keySubs[key] || []);
+							testRegExSubs(key, val);
+						}
 					};
 
 					/*
@@ -275,6 +324,9 @@
 						 *            The key the message should be stored as.
 						 * @param val
 						 *            The message.
+						 * 
+						 * @param noStore
+						 *            Set to true to skip message storage.
 						 */
 						store : store,
 

@@ -40,7 +40,81 @@ describe("SpubSub", function() {
 		});
 
 	});
+	
+	it("can publish using dot wildcard character", function() {
+		var keyUnderTest = "level1.level2.level3";
+		var fired = false;
 
+		var spubSub = SpubSub({
+			topicSeparator: "."
+		});
+		
+		spubSub.subscribe({
+			key : keyUnderTest,
+			fn : function(key, msg) {
+				fired = true;
+			}
+		});
+
+		spubSub.store("level1.*");
+
+		waitsFor(function() {
+			return fired;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(fired).toEqual(true);
+		});
+		
+		runs(function() {
+			fired = false;
+			spubSub.store("level1.level2.*");
+		});
+		
+		waitsFor(function() {
+			return fired;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(fired).toEqual(true);
+		});
+	});
+
+	it("can publish using wildcard character", function() {
+		var keyUnderTest = "/level1/level2/level3";
+		var fired = false;
+
+		spubSub.subscribe({
+			key : keyUnderTest,
+			fn : function(key, msg) {
+				fired = true;
+			}
+		});
+
+		spubSub.store("/level1/*");
+
+		waitsFor(function() {
+			return fired;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(fired).toEqual(true);
+		});
+		
+		runs(function() {
+			fired = false;
+			spubSub.store("/level1/level2/*");
+		});
+		
+		waitsFor(function() {
+			return fired;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(fired).toEqual(true);
+		});
+	});
+	
 	it("can remove subscriber configured as once", function() {
 		var keyUnderTest = "key";
 		var fired = false;
