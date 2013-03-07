@@ -63,11 +63,11 @@ removeAll()
 var spubSub = SpubSub();
 
 spubSub.subscribe({
-			key: "test",
-			fn: function(key, msg) {
-				// Do something
-			}
-		});
+	key: "test",
+	fn: function(key, msg) {
+		// Do something
+	}
+});
 		
 spubSub.store("test", {});		
 ```
@@ -77,11 +77,11 @@ spubSub.store("test", {});
 var spubSub = SpubSub();
 
 spubSub.subscribe({
-			key: [ "test1", "test2", "test3" ],
-			fn: function(key, msg) {
-				// I'm called 3 times
-			}
-		});		
+	key: [ "test1", "test2", "test3" ],
+	fn: function(key, msg) {
+		// I'm called 3 times
+	}
+});		
 		
 spubSub.store("test1", {});
 spubSub.store("test2", {});
