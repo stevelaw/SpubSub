@@ -145,6 +145,57 @@ describe("SpubSub", function() {
 
 	});
 
+	it("can subscribe with regular expression", function() {
+		var keyUnderTest = new RegExp("(t|r|b)est");
+		var keysToStore = ["test", "best", "rest"];
+		var fired = 0;
+
+		spubSub.subscribe({
+			key : keyUnderTest,
+			fn : function(key, msg) {
+				fired++;
+			}
+		});
+
+		for(var i =0, len = keysToStore.length; i<len; i++) {
+			spubSub.store(keysToStore[i]);
+		}
+
+		waitsFor(function() {
+			return fired === 3;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(fired).toEqual(3);
+		});
+	});
+	
+	it("can subscribe with regular expression and callback with correct key", function() {
+		var keyUnderTest = new RegExp("(t|r|b)est");
+		var keysToStore = ["test", "best", "rest"];
+		var results = [];
+
+		spubSub.subscribe({
+			key : keyUnderTest,
+			fn : function(key, msg) {
+				results.push(key);
+			}
+		});
+
+		for(var i =0, len = keysToStore.length; i<len; i++) {
+			spubSub.store(keysToStore[i]);
+		}
+
+		waitsFor(function() {
+			return results.length === 3;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(results).toEqual(keysToStore);
+		});
+
+	});
+	
 	it('can store and fetch', function() {
 		var keyUnderTest = "key";
 		var value = "works";

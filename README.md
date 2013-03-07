@@ -44,6 +44,24 @@ spubSub.store("test2", {});
 spubSub.store("test3", {});		
 ```
 
+### Subscribe Using RegExp Object
+```
+var spubSub = SpubSub();
+
+spubSub.subscribe({
+	key : new RegExp("(t|r|b)est"),
+	fn : function(key, msg) {
+		// Key will be the matching regex (test, best, rest).
+	}
+});
+
+spubSub.store("test");
+spubSub.store("best");
+spubSub.store("rest");		
+```
+
+
+
 ### Delete a Stored Key
 ```
 var spubSub = SpubSub();
