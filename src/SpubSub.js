@@ -30,7 +30,7 @@
 			 * Array of RegEx subscriptions. We need to scan each subscription
 			 * to determine a match. Limit the size of these subscriptions, by
 			 * unsubscribing when not needed, or use string values when the
-			 * possible number of matches is low, is ideal.
+			 * possible number of matches is low.
 			 */
 			var regExSubs = [];
 
@@ -68,22 +68,8 @@
 				}
 			};
 
-			/**
-			 * Subscribe a function by key or RegExp object, to be called when a
-			 * message is stored matching the registered key or RegExp.
-			 * 
-			 * @param options.key
-			 *            The subscription key. This can be an array of values.
-			 *            The key can also be a RegEx object. A string will be
-			 *            taken literally, and not interpreted as a regular
-			 *            expression. (Required)
-			 * 
-			 * @param options.fn
-			 *            Called when matched message is stored. (Required)
-			 * 
-			 * @throws Error
-			 *             If any of the required arguments are not supplied, or
-			 *             of the incorrect type.
+			/*
+			 * See JSDoc below.
 			 */
 			var subscribe = function(options) {
 				// Validate method arguments.
@@ -126,14 +112,8 @@
 				}
 			};
 
-			/**
-			 * Unsubscribe an individual or all listeners.
-			 * 
-			 * @param key
-			 *            Key to unsubscribe. If set to "all", then all
-			 *            subscribers are removed.
-			 * @param listener
-			 *            Listener to unsubscribe.
+			/*
+			 * See JSDoc below.
 			 */
 			var unsubscribe = function(key, fn) {
 				if (key === "all") {
@@ -172,13 +152,8 @@
 				}
 			};
 
-			/**
-			 * Store a message by key in the SpubSub, and notify any listeners.
-			 * 
-			 * @param key
-			 *            The key the message should be stored as.
-			 * @param val
-			 *            The message.
+			/*
+			 * See JSDoc below.
 			 */
 			var store = function(key, val) {
 				messages[key] = val;
@@ -195,34 +170,80 @@
 				testRegExSubs(key, val);
 			};
 
-			/**
-			 * Returns a message by passed in key name.
-			 * 
-			 * @param key
-			 *            Key name with which to retrieve the message from the
-			 *            internal message store. Undefined is returned if the
-			 *            message by the key does not exist.
+			/*
+			 * See JSDoc below.
 			 */
 			var fetch = function(key) {
 				return messages[key];
 			};
 
-			/**
-			 * Deletes a message by passed in key name.
-			 * 
-			 * @param key
-			 *            Key name with which to delete the message from the
-			 *            internal message store.
+			/*
+			 * See JSDoc below.
 			 */
 			var remove = function(key) {
 				return delete messages[key];
 			};
 
 			return {
+				/**
+				 * Subscribe a function by key or RegExp object, to be called
+				 * when a message is stored matching the registered key or
+				 * RegExp.
+				 * 
+				 * @param options.key
+				 *            The subscription key. This can be an array of
+				 *            values. The key can also be a RegEx object. A
+				 *            string will be taken literally, and not
+				 *            interpreted as a regular expression. (Required)
+				 * 
+				 * @param options.fn
+				 *            Called when matched message is stored. (Required)
+				 * 
+				 * @throws Error
+				 *             If any of the required arguments are not
+				 *             supplied, or of the incorrect type.
+				 */
 				subscribe : subscribe,
+
+				/**
+				 * Store a message by key in the SpubSub, and notify any
+				 * listeners.
+				 * 
+				 * @param key
+				 *            The key the message should be stored as.
+				 * @param val
+				 *            The message.
+				 */
 				store : store,
+
+				/**
+				 * Returns a message by passed in key name.
+				 * 
+				 * @param key
+				 *            Key name with which to retrieve the message from
+				 *            the internal message store. Undefined is returned
+				 *            if the message by the key does not exist.
+				 */
 				fetch : fetch,
+
+				/**
+				 * Deletes a message by passed in key name.
+				 * 
+				 * @param key
+				 *            Key name with which to delete the message from the
+				 *            internal message store.
+				 */
 				remove : remove,
+
+				/**
+				 * Unsubscribe an individual or all listeners.
+				 * 
+				 * @param key
+				 *            Key to unsubscribe. If set to "all", then all
+				 *            subscribers are removed.
+				 * @param listener
+				 *            Listener to unsubscribe.
+				 */
 				unsubscribe : unsubscribe
 			};
 		}));

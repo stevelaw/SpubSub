@@ -170,7 +170,47 @@ describe("SpubSub", function() {
 		});
 	});
 	
-	it("can subscribe with regular expression and callback with correct key", function() {
+	it("can unsubscribe with regular expression", function() {
+		var keyUnderTest = new RegExp("(t|r|b)est");
+		var keysToStore = ["test", "best", "rest"];
+		var fired = 0;
+
+		var fn = function(key, msg) {
+			fired++;
+		};
+		
+		spubSub.subscribe({
+			key : keyUnderTest,
+			fn : fn
+		});
+
+		for(var i =0, len = keysToStore.length; i<len; i++) {
+			spubSub.store(keysToStore[i]);
+		}
+
+		waitsFor(function() {
+			return fired === 3;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(fired).toEqual(3);
+		});
+		
+		runs(function() {
+			fired = 0;
+			spubSub.unsubscribe(keyUnderTest, fn);
+			
+			for(var i =0, len = keysToStore.length; i<len; i++) {
+				spubSub.store(keysToStore[i]);
+			}	
+		});
+		
+		runs(function() {
+			expect(fired).toEqual(0);
+		});
+	});
+	
+	it("can subscribe with regular expression and callback with correct key and order", function() {
 		var keyUnderTest = new RegExp("(t|r|b)est");
 		var keysToStore = ["test", "best", "rest"];
 		var results = [];
