@@ -1,19 +1,19 @@
 ## What is it?
 
-A pubsub implementation that stores messages prior to publishing to 
+A flexible pubsub implementation that stores messages prior to publishing to 
 subscribers.  
-
-It is a universal module, and will therefore work anywhere, be it in the 
-client, on the server or anywhere else.
-
-It is compatibile with the most popular script loaders of the day 
-(e.g RequireJS amongst others), and in many cases uses AMD as a base, 
-with special-casing added to handle CommonJS compatability.
 
 ## What Does SpubSub Stand For?
 
 The "S" stands for "Store".  I like to refer to it as a "Store and Forward 
 PubSub".
+
+## Features
+
+* Group/Flat Addressing.
+* Topic/Hierarchical Addressing, with Wildcard support.
+* Universal Module (UMD), supporting traditional browser environments, common script loaders (ie. RequireJS), and Node environment.
+* Comprehensive Jasmine Tests
 
 ## Dependencies
 
@@ -73,7 +73,7 @@ spubSub.store("test", {});
 ```
 
 ### Subscribe Using Key Array
-```
+```javascript
 var spubSub = SpubSub();
 
 spubSub.subscribe({
@@ -89,7 +89,7 @@ spubSub.store("test3", {});
 ```
 
 ### Subscribe Using RegExp Object
-```
+```javascript
 var spubSub = SpubSub();
 
 spubSub.subscribe({
@@ -105,7 +105,7 @@ spubSub.store("rest");
 ```
 
 ### Publish Using Topic Hierarchy and Wildcard
-```
+```javascript
 var spubSub = SpubSub();
 		
 spubSub.subscribe({
@@ -120,7 +120,7 @@ spubSub.store("/level1/level2/*");
 ```
 
 ### Publish Using Topic Hierarchy, Wildcard, and Custom Topic Separator
-```
+```javascript
 var spubSub = SpubSub({
 	topicSeparator: "."
 });
@@ -137,7 +137,7 @@ spubSub.store("level1.level2.*");
 ```
 
 ### Unsubscribe Using Subscribe Handle
-```
+```javascript
 var spubSub = SpubSub();
 		
 var handle = spubSub.subscribe({
@@ -149,7 +149,7 @@ var num = spubSub.unsubscribe(handle);
 ```
 
 ### Unsubscribe Using Key and Function
-```
+```javascript
 var spubSub = SpubSub();
 		
 var key = "test";
@@ -164,7 +164,7 @@ var num = spubSub.unsubscribe(key, fn);
 ```
 
 ### Delete a Stored Key
-```
+```javascript
 var spubSub = SpubSub();
 		
 spubSub.store("test", {});
@@ -172,7 +172,7 @@ spubSub.remove("test");
 ```
 
 ### Retrieve a Stored Key
-```
+```javascript
 var spubSub = SpubSub();
 		
 spubSub.store("test", {});
