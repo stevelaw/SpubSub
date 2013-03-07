@@ -59,7 +59,7 @@ removeAll()
 ## Usage
 
 ### Simple Subscribe and Store
-```
+```javascript
 var spubSub = SpubSub();
 
 spubSub.subscribe({
