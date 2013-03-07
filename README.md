@@ -3,6 +3,13 @@
 A pubsub implementation that stores messages prior to publishing to 
 subscribers.  
 
+It is a universal module, and will therefore work anywhere, be it in the 
+client, on the server or anywhere else.
+
+It is compatibile with the most popular script loaders of the day 
+(e.g RequireJS amongst others), and in many cases uses AMD as a base, 
+with special-casing added to handle CommonJS compatability.
+
 ## What Does SpubSub Stand For?
 
 The "S" stands for "Store".  I like to refer to it as a "Store and Forward 
@@ -11,6 +18,25 @@ PubSub".
 ## Dependencies
 
 None
+
+## API
+
+```
+subscribe(options)
+	where 
+		options.key is a single value or array of String or RegExp objects.
+		options.fn is the callback executed when a matched message key is stored.
+
+unsubscribe(key, listener)
+		
+store(key, val)	
+
+fetch(key)
+
+remove(key)
+
+removeAll()	 
+```
 
 ## Usage
 

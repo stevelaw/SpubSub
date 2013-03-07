@@ -184,6 +184,13 @@
 				return delete messages[key];
 			};
 
+			/*
+			 * See JSDoc below.
+			 */
+			var removeAll = function() {
+				messages = {};
+			};
+
 			return {
 				/**
 				 * Subscribe a function by key or RegExp object, to be called
@@ -244,6 +251,11 @@
 				 * @param listener
 				 *            Listener to unsubscribe.
 				 */
-				unsubscribe : unsubscribe
+				unsubscribe : unsubscribe,
+
+				/**
+				 * Removes all messages from the internal message store.
+				 */
+				removeAll : removeAll
 			};
 		}));
