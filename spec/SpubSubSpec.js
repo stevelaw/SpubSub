@@ -278,6 +278,8 @@ describe("SpubSub", function() {
 			}	
 		});
 		
+		waits(0);
+		
 		runs(function() {
 			expect(fired).toEqual(0);
 		});
@@ -361,6 +363,8 @@ describe("SpubSub", function() {
 			spubSub.unsubscribe(keyUnderTest, fn);
 			spubSub.store(keyUnderTest, true);
 		});
+		
+		waits(0);
 		
 		runs(function() {
 			expect(fired).toEqual(false);
