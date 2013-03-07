@@ -100,6 +100,45 @@ describe("SpubSub", function() {
 
 	});
 	
+	it("can unsubscribe with handle from many keys in one subscribe", function() {
+		var keysUnderTest = [ "key1", "key2", "key3", "key4", "key5" ];
+		var fired = 0;
+
+		var handle = spubSub.subscribe({
+			key : keysUnderTest,
+			fn : function(key, msg) {
+				fired++;
+			}
+		});
+
+		keysUnderTest.forEach(function(key) {
+			spubSub.store(key, true);
+		});
+
+		waitsFor(function() {
+			return fired === keysUnderTest.length;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			fired = 0;
+			
+			var num = spubSub.unsubscribe(handle);
+			
+			expect(num).toEqual(keysUnderTest.length);
+			
+			keysUnderTest.forEach(function(key) {
+				spubSub.store(key, true);
+			});
+		});
+		
+		waits(0);
+		
+		runs(function() {
+			expect(fired).toEqual(0);
+		});
+
+	});
+	
 	it("can remove many subscribers configured as once", function() {
 		var keysUnderTest = [ "key1", "key2", "key3", "key4", "key5" ];
 		var fired = 0;
@@ -271,7 +310,9 @@ describe("SpubSub", function() {
 		
 		runs(function() {
 			fired = 0;
-			spubSub.unsubscribe(keyUnderTest, fn);
+			var num = spubSub.unsubscribe(keyUnderTest, fn);
+			
+			expect(num).toEqual(1);
 			
 			for(var i =0, len = keysToStore.length; i<len; i++) {
 				spubSub.store(keysToStore[i]);
@@ -360,7 +401,49 @@ describe("SpubSub", function() {
 		
 		runs(function() {
 			fired = false;
-			spubSub.unsubscribe(keyUnderTest, fn);
+			var num = spubSub.unsubscribe(keyUnderTest, fn);
+			
+			expect(num).toEqual(1);
+			
+			spubSub.store(keyUnderTest, true);
+		});
+		
+		waits(0);
+		
+		runs(function() {
+			expect(fired).toEqual(false);
+		});
+
+	});
+	
+	it("can unsubscribe with handle", function() {
+		var keyUnderTest = "key";
+		var fired = false;
+		var fn = function() {
+			fired = true;
+		};
+		
+		var handle = spubSub.subscribe({
+			key : keyUnderTest,
+			fn : fn
+		});
+
+		spubSub.store(keyUnderTest, true);
+
+		waitsFor(function() {
+			return fired;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(fired).toEqual(true);
+		});
+		
+		runs(function() {
+			fired = false;
+			var num = spubSub.unsubscribe(handle);
+			
+			expect(num).toEqual(1);
+			
 			spubSub.store(keyUnderTest, true);
 		});
 		

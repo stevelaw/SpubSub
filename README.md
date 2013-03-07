@@ -24,11 +24,27 @@ None
 ```
 subscribe(options)
 	where 
-		options.key is a single value or array of String or RegExp objects.
-		options.fn is the callback executed when a matched message key is stored.
-		options.once removes the subscriber after the first notification.
+		options.key 
+			A single value or array of String or RegExp objects.
+		options.fn 
+			Callback executed when a matched message key is stored.
+		options.once 
+			Removes the subscriber after the first notification.
+		
+	returns 
+		A handle that can be passed to unsubscribe.	
 
-unsubscribe(key, listener)
+unsubscribe(handle, listener)
+	where 
+		handle
+			A String, RegExp, or a handle returned from subscribe. If handle 
+			is a String, the listener must be the listener function.
+		
+		listener
+			Required if key is a String or RegExp.
+		
+	returns
+		The number of listeners that were unsubscribed.	
 		
 store(key, val)	
 
