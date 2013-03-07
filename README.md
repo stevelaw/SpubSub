@@ -104,7 +104,64 @@ spubSub.store("best");
 spubSub.store("rest");		
 ```
 
+### Publish Using Topic Hierarchy and Wildcard
+```
+var spubSub = SpubSub();
+		
+spubSub.subscribe({
+	key : "/level1/level2/level3",
+	fn : function(key, msg) {
+		// Will be called twice
+	}
+});
 
+spubSub.store("/level1/*");
+spubSub.store("/level1/level2/*");
+```
+
+### Publish Using Topic Hierarchy, Wildcard, and Custom Topic Separator
+```
+var spubSub = SpubSub({
+	topicSeparator: "."
+});
+		
+spubSub.subscribe({
+	key : "level1.level2.level3",
+	fn : function(key, msg) {
+		// Will be called twice
+	}
+});
+
+spubSub.store("level1.*");
+spubSub.store("level1.level2.*");
+```
+
+### Unsubscribe Using Subscribe Handle
+```
+var spubSub = SpubSub();
+		
+var handle = spubSub.subscribe({
+	key : "test",
+	fn : fn
+});
+
+var num = spubSub.unsubscribe(handle);
+```
+
+### Unsubscribe Using Key and Function
+```
+var spubSub = SpubSub();
+		
+var key = "test";
+var fn = function(){};
+		
+var handle = spubSub.subscribe({
+	key : key,
+	fn : fn
+});
+
+var num = spubSub.unsubscribe(key, fn);
+```
 
 ### Delete a Stored Key
 ```
