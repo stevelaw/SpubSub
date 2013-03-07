@@ -25,7 +25,8 @@ None
 subscribe(options)
 	where 
 		options.key 
-			A single value or array of String or RegExp objects.
+			A String or RegExp object, or an array of String and/or RegExp 
+			objects.
 		options.fn 
 			Callback executed when a matched message key is stored.
 		options.once 
