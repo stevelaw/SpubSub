@@ -26,6 +26,7 @@ subscribe(options)
 	where 
 		options.key is a single value or array of String or RegExp objects.
 		options.fn is the callback executed when a matched message key is stored.
+		options.once removes the subscriber after the first notification.
 
 unsubscribe(key, listener)
 		

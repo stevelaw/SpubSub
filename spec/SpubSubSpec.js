@@ -41,6 +41,40 @@ describe("SpubSub", function() {
 
 	});
 
+	it("can remove subscriber configured as once", function() {
+		var keyUnderTest = "key";
+		var fired = false;
+
+		spubSub.subscribe({
+			key : keyUnderTest,
+			once: true,
+			fn : function(key, msg) {
+				fired = true;
+			}
+		});
+
+		spubSub.store(keyUnderTest);
+
+		waitsFor(function() {
+			return fired;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(fired).toEqual(true);
+		});
+
+		runs(function() {
+			fired = false;
+			spubSub.store(keyUnderTest);
+		});
+		
+		waits(0);
+		
+		runs(function() {
+			expect(fired).toEqual(false);
+		});
+	});
+	
 	it("can subscribe with many keys in one subscribe", function() {
 		var keysUnderTest = [ "key1", "key2", "key3", "key4", "key5" ];
 		var fired = 0;
@@ -64,6 +98,45 @@ describe("SpubSub", function() {
 			expect(fired).toEqual(keysUnderTest.length);
 		});
 
+	});
+	
+	it("can remove many subscribers configured as once", function() {
+		var keysUnderTest = [ "key1", "key2", "key3", "key4", "key5" ];
+		var fired = 0;
+
+		spubSub.subscribe({
+			key : keysUnderTest,
+			once: true,
+			fn : function(key, msg) {
+				fired++;
+			}
+		});
+
+		for(var i = 0, len = keysUnderTest.length; i< len; i++) {
+			spubSub.store(keysUnderTest[i], true);
+		}
+
+		waitsFor(function() {
+			return fired === keysUnderTest.length;
+		}, 'Event listener never fired', 1000);
+
+		runs(function() {
+			expect(fired).toEqual(keysUnderTest.length);
+		});
+
+		runs(function() {
+			fired = 0;
+		
+			for(var i = 0, len = keysUnderTest.length; i< len; i++) {
+				spubSub.store(keysUnderTest[i]);
+			}
+		});
+		
+		waits(0);
+		
+		runs(function() {
+			expect(fired).toEqual(0);
+		});
 	});
 
 	it("can subscribe with many keys in many subscribe", function() {

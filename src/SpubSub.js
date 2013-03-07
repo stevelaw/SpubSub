@@ -50,9 +50,16 @@
 			 * Executes in setTimeout to allow the caller to not be blocked by
 			 * callee.
 			 */
-			var executeCallback = function(fn, key, message) {
+			var executeCallback = function(entry, key, message) {
 				setTimeout(function() {
-					fn(key, message);
+					entry.fn(key, message);
+
+					if (entry.once) {
+						// If entry is a regular expression key, then we need to
+						// unsubscribe using the RegExp object, and not the
+						// matched key value.
+						unsubscribe(entry.regex || key, entry.fn);
+					}
 				}, 0);
 			};
 
@@ -63,7 +70,7 @@
 				for ( var i = 0, len = regExSubs.length; i < len; i++) {
 					var entry = regExSubs[i];
 					if (entry.regex.test(key)) {
-						executeCallback(entry.fn, key, message);
+						executeCallback(entry, key, message);
 					}
 				}
 			};
@@ -88,13 +95,17 @@
 
 				var fn = options.fn;
 
+				// Guarantee a boolean data-type
+				var once = !!options.once;
+
 				for ( var i = 0, len = keyArray.length; i < len; i++) {
 					var key = keyArray[i];
 
 					if (key instanceof RegExp) {
 						regExSubs.push({
 							regex : key,
-							fn : fn
+							fn : fn,
+							once : once
 						});
 					} else {
 						/*
@@ -106,7 +117,8 @@
 
 						// Push an object for flexibility.
 						keySubs[key].push({
-							fn : fn
+							fn : fn,
+							once : once
 						});
 					}
 				}
@@ -163,7 +175,7 @@
 					var subs = keySubs[key];
 
 					for ( var i = 0, len = subs.length; i < len; i++) {
-						executeCallback(subs[i].fn, key, val);
+						executeCallback(subs[i], key, val);
 					}
 				}
 
@@ -191,6 +203,9 @@
 				messages = {};
 			};
 
+			/*
+			 * Public API
+			 */
 			return {
 				/**
 				 * Subscribe a function by key or RegExp object, to be called
@@ -205,6 +220,10 @@
 				 * 
 				 * @param options.fn
 				 *            Called when matched message is stored. (Required)
+				 * 
+				 * @param options.once
+				 *            Set to true when the subscriber should be removed
+				 *            after first notification.
 				 * 
 				 * @throws Error
 				 *             If any of the required arguments are not
