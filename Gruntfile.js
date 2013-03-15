@@ -4,6 +4,7 @@ module.exports = function(grunt) {
 	 * Variables
 	 */
 	var src = 'src/**/*.js';
+	var specs = 'spec/*Spec.js';
 
 	/*
 	 * Config
@@ -44,7 +45,7 @@ module.exports = function(grunt) {
 			},
 			all : {
 				files : {
-					'spubsub.min.js' : src
+					'<%= pkg.name %>.min.js' : src
 				}
 			}
 		}
