@@ -1,4 +1,3 @@
-;
 /**
  * A pubsub implementation that stores messages prior to publishing to
  * subscribers.
@@ -169,18 +168,19 @@
 
 						var numUnsubscribed = 0, nHandles = handles.length;
 
+						var i, len;
 						while (nHandles--) {
-							var handle = handles[nHandles];
-							var key = handle.key;
-							var fn = handle.fn;
+							var cHandle = handles[nHandles];
+							var key = cHandle.key;
+							var cFn = cHandle.fn;
 
 							if (key instanceof RegExp) {
-								for ( var i = 0, len = regExSubs.length; i < len; i++) {
+								for (i = 0, len = regExSubs.length; i < len; i++) {
 									var regExSub = regExSubs[i];
 									var regEx = regExSub.regex;
 									var regExFn = regExSub.fn;
 
-									if (regEx === key && fn === regExFn) {
+									if (regEx === key && cFn === regExFn) {
 										regExSubs.splice(i, 1);
 										numUnsubscribed++;
 										break;
@@ -190,8 +190,8 @@
 								var subs = keySubs[key];
 
 								if (subs !== undefined && subs.length) {
-									for ( var i = 0, len = subs.length; i < len; i++) {
-										if (fn === subs[i].fn) {
+									for (i = 0, len = subs.length; i < len; i++) {
+										if (cFn === subs[i].fn) {
 											subs.splice(i, 1);
 
 											numUnsubscribed++;
